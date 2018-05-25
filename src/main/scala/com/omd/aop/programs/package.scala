@@ -1,5 +1,3 @@
 package com.omd.aop
 
-package object programs extends Recursion with RecursiveStructs {
-
-}
+package object programs extends Recursion with RecursiveTypes with Recursions

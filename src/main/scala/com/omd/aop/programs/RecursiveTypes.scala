@@ -1,6 +1,6 @@
 package com.omd.aop.programs
 
-trait RecursiveStructs {
+protected[programs] trait RecursiveTypes {
   final implicit def natural: Recursive[Int] = new Recursive[Int] {
     final def zero: Int = 0
 
