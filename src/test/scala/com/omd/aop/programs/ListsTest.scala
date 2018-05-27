@@ -1,6 +1,7 @@
 package com.omd.aop.programs
 
 import org.scalatest.{MustMatchers, WordSpec}
+import scalaz.Scalaz._
 
 final class ListsTest extends WordSpec with MustMatchers {
   "convert" must {
@@ -30,6 +31,26 @@ final class ListsTest extends WordSpec with MustMatchers {
 
     "map function to left list" in {
       leftList.fmap(_ * 2) must be(snoc(snoc(snoc[Int](LNil, 4), 6), 8))
+    }
+  }
+
+  "sum" must {
+    "add elements of left list" in {
+      rightList.sum must be (9)
+    }
+
+    "add elements of right list" in {
+      leftList.sum must be (9)
+    }
+  }
+
+  "lenght" must {
+    "count elements of left list" in {
+      rightList.length must be (3)
+    }
+
+    "count elements of right list" in {
+      leftList.length must be (3)
     }
   }
 

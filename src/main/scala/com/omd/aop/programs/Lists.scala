@@ -1,6 +1,7 @@
 package com.omd.aop.programs
 
 import scalaz.Isomorphism.<~>
+import scalaz.Monoid
 
 import scala.annotation.tailrec
 
@@ -42,11 +43,19 @@ trait Lists { self: Isomorphisms ⇒
     def ⧺[AA <: A] (other: ListR[AA]): ListR[A] = concat(as, other)
 
     def fmap[B](f: A ⇒ B): ListR[B] = listr(f)(as)
+
+    def sum(implicit ev: Monoid[A]): A = foldr[A, A](ev.zero, ev.append(_, _))(as)
+
+    def length: Int = fmap(_ ⇒ 1).sum
   }
 
   implicit class RichListL[A](as: ListL[A]) {
     def ⧺[AA <: A] (other: ListL[AA]): ListL[A] = concat(as, other)
 
     def fmap[B](f: A ⇒ B): ListL[B] = listl(f)(as)
+
+    def sum(implicit ev: Monoid[A]): A = foldl[A, A](ev.zero, ev.append(_, _))(as)
+
+    def length: Int = fmap(_ ⇒ 1).sum
   }
 }
