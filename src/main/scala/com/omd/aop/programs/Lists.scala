@@ -15,28 +15,16 @@ trait Lists { self: Isomorphisms ⇒
   final def convert[A](lr: ListR[A]): ListL[A] = implicitly[ListL <~> ListR].from(lr)
 
   @tailrec
-  private def concatR[A](as: ListL[A], acc: ListR[A]): ListR[A] = as match {
-    case LNil        ⇒ acc
-    case Snoc(hs, t) ⇒ concatR(hs, Cons(t, acc))
-  }
-
-  final def concat[A](as: ListR[A], aas: ListR[A]): ListR[A] = concatR(convert(as), aas)
-
-  @tailrec
-  private def concatL[A](acc: ListL[A], as: ListR[A]): ListL[A] = as match {
-    case RNil       ⇒ acc
-    case Cons(h, t) ⇒ concatL(Snoc(acc, h), t)
-  }
-
-  @tailrec
   private def foldR[A, B](c: B, f: (A, B) ⇒ B, acc: B)(as: ListL[A]): B = as match {
     case LNil        ⇒ acc
     case Snoc(hs, t) ⇒ foldR(c, f, f(t, acc))(hs)
   }
 
-  def foldr[A, B](c: B, f: (A, B) ⇒ B): ListR[A] ⇒ B = as ⇒ foldR(c, f, c)(convert(as))
+  final def foldr[A, B](c: B, f: (A, B) ⇒ B): ListR[A] ⇒ B = as ⇒ foldR(c, f, c)(convert(as))
 
-  def listr[A, B](f: A ⇒ B): ListR[A] ⇒ ListR[B] = foldr[A, ListR[B]](nilR[B], {(a, bs) ⇒ cons(f(a), bs) })
+  final def listr[A, B](f: A ⇒ B): ListR[A] ⇒ ListR[B] = foldr[A, ListR[B]](nilR[B], {(a, bs) ⇒ cons(f(a), bs) })
+
+  final def concat[A](as: ListR[A], aas: ListR[A]): ListR[A] = foldr[A, ListR[A]](as, cons)(aas)
 
   @tailrec
   private def foldL[A, B](c: B, f: (B, A) ⇒ B, acc: B)(as: ListR[A]): B = as match {
@@ -44,11 +32,11 @@ trait Lists { self: Isomorphisms ⇒
     case Cons(h, t) ⇒ foldL(c, f, f(acc, h))(t)
   }
 
-  def foldl[A, B](c: B, h: (B, A) ⇒ B): ListL[A] ⇒ B = as ⇒ foldL(c, h, c)(convert(as))
+  final def foldl[A, B](c: B, h: (B, A) ⇒ B): ListL[A] ⇒ B = as ⇒ foldL(c, h, c)(convert(as))
 
-  def listl[A, B](f: A ⇒ B): ListL[A] ⇒ ListL[B] = foldl[A, ListL[B]](nilL[B], { (b, a) ⇒ snoc(b, f(a))})
+  final def listl[A, B](f: A ⇒ B): ListL[A] ⇒ ListL[B] = foldl[A, ListL[B]](nilL[B], { (b, a) ⇒ snoc(b, f(a))})
 
-  final def concat[A](as: ListL[A], aas: ListL[A]): ListL[A] = concatL(as, convert(aas))
+  final def concat[A](as: ListL[A], aas: ListL[A]): ListL[A] = foldl[A, ListL[A]](as, snoc)(aas)
 
   implicit class RichListR[A](as: ListR[A]) {
     def ⧺[AA <: A] (other: ListR[AA]): ListR[A] = concat(as, other)
