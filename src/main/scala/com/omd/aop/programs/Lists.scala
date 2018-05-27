@@ -34,8 +34,9 @@ trait Lists { self: Isomorphisms ⇒
     case Snoc(hs, t) ⇒ foldR(c, f, f(t, acc))(hs)
   }
 
-  def listr[A, B](f: A ⇒ B): ListR[A] ⇒ ListR[B] =
-    as ⇒  foldR[A, ListR[B]](nilR, {(a, bs) ⇒ cons(f(a), bs) }, nilR)(convert(as))
+  def foldr[A, B](c: B, f: (A, B) ⇒ B): ListR[A] ⇒ B = as ⇒ foldR(c, f, c)(convert(as))
+
+  def listr[A, B](f: A ⇒ B): ListR[A] ⇒ ListR[B] = foldr[A, ListR[B]](nilR[B], {(a, bs) ⇒ cons(f(a), bs) })
 
   @tailrec
   private def foldL[A, B](c: B, f: (B, A) ⇒ B, acc: B)(as: ListR[A]): B = as match {
@@ -43,8 +44,9 @@ trait Lists { self: Isomorphisms ⇒
     case Cons(h, t) ⇒ foldL(c, f, f(acc, h))(t)
   }
 
-  def listl[A, B](f: A ⇒ B): ListL[A] ⇒ ListL[B] =
-    as ⇒ foldL[A, ListL[B]](nilL, { (b, a) ⇒ snoc(b, f(a))}, nilL)(convert(as))
+  def foldl[A, B](c: B, h: (B, A) ⇒ B): ListL[A] ⇒ B = as ⇒ foldL(c, h, c)(convert(as))
+
+  def listl[A, B](f: A ⇒ B): ListL[A] ⇒ ListL[B] = foldl[A, ListL[B]](nilL[B], { (b, a) ⇒ snoc(b, f(a))})
 
   final def concat[A](as: ListL[A], aas: ListL[A]): ListL[A] = concatL(as, convert(aas))
 
