@@ -23,6 +23,16 @@ final class ListsTest extends WordSpec with MustMatchers {
     }
   }
 
+  "fmap" must {
+    "map function to right list" in {
+      rightList.fmap(_ * 2) must be (cons(4, cons(6, cons(8, nilR))))
+    }
+
+    "map function to left list" in {
+      leftList.fmap(_ * 2) must be(snoc(snoc(snoc[Int](LNil, 4), 6), 8))
+    }
+  }
+
   private def rightList =  cons(2, cons(3, cons(4, nilR)))
 
   private def leftList =  snoc(snoc(snoc[Int](LNil, 2), 3), 4)

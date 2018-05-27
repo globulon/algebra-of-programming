@@ -28,13 +28,35 @@ trait Lists { self: Isomorphisms ⇒
     case Cons(h, t) ⇒ concatL(Snoc(acc, h), t)
   }
 
+  @tailrec
+  private def foldR[A, B](c: B, f: (A, B) ⇒ B, acc: B)(as: ListL[A]): B = as match {
+    case LNil        ⇒ acc
+    case Snoc(hs, t) ⇒ foldR(c, f, f(t, acc))(hs)
+  }
+
+  def listr[A, B](f: A ⇒ B): ListR[A] ⇒ ListR[B] =
+    as ⇒  foldR[A, ListR[B]](nilR, {(a, bs) ⇒ cons(f(a), bs) }, nilR)(convert(as))
+
+  @tailrec
+  private def foldL[A, B](c: B, f: (B, A) ⇒ B, acc: B)(as: ListR[A]): B = as match {
+    case RNil ⇒ acc
+    case Cons(h, t) ⇒ foldL(c, f, f(acc, h))(t)
+  }
+
+  def listl[A, B](f: A ⇒ B): ListL[A] ⇒ ListL[B] =
+    as ⇒ foldL[A, ListL[B]](nilL, { (b, a) ⇒ snoc(b, f(a))}, nilL)(convert(as))
+
   final def concat[A](as: ListL[A], aas: ListL[A]): ListL[A] = concatL(as, convert(aas))
 
   implicit class RichListR[A](as: ListR[A]) {
     def ⧺[AA <: A] (other: ListR[AA]): ListR[A] = concat(as, other)
+
+    def fmap[B](f: A ⇒ B): ListR[B] = listr(f)(as)
   }
 
   implicit class RichListL[A](as: ListL[A]) {
     def ⧺[AA <: A] (other: ListL[AA]): ListL[A] = concat(as, other)
+
+    def fmap[B](f: A ⇒ B): ListL[B] = listl(f)(as)
   }
 }
