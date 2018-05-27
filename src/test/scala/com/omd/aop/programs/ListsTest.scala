@@ -13,6 +13,12 @@ final class ListsTest extends WordSpec with MustMatchers {
     }
   }
 
+  "concat" must {
+    "append list" in {
+      rightList ⧺ rightList must be (cons(2, cons(3, cons(4, cons(2, cons(3, cons(4, nilR)))))))
+    }
+  }
+
   private def rightList =  cons(2, cons(3, cons(4, nilR)))
 
   private def leftList =  snoc(snoc(snoc[Int](LNil, 2), 3), 4)
