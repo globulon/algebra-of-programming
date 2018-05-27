@@ -10,5 +10,7 @@ trait Lists { self: Isomorphisms ⇒
   final def snoc[A](h: ListL[A], r: A): ListL[A] = Snoc(h, r)
   final def nilL[A]: ListL[A] = LNil
 
-  final def convert[A]: ListL[A] ⇒ ListR[A] = implicitly[ListL <~> ListR].to.apply
+  final def convert[A](ll: ListL[A]): ListR[A] = implicitly[ListL <~> ListR].to(ll)
+
+  final def convert[A](lr: ListR[A]): ListL[A] = implicitly[ListL <~> ListR].from(lr)
 }
