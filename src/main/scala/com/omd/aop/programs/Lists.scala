@@ -15,15 +15,26 @@ trait Lists { self: Isomorphisms ⇒
   final def convert[A](lr: ListR[A]): ListL[A] = implicitly[ListL <~> ListR].from(lr)
 
   @tailrec
-  private def concat[A](as: ListL[A], acc: ListR[A]): ListR[A] = as match {
+  private def concatR[A](as: ListL[A], acc: ListR[A]): ListR[A] = as match {
     case LNil        ⇒ acc
-    case Snoc(hs, t) ⇒ concat(hs, Cons(t, acc))
+    case Snoc(hs, t) ⇒ concatR(hs, Cons(t, acc))
   }
 
-  final def concat[A](as: ListR[A], aas: ListR[A]): ListR[A] = concat(convert(as), aas)
+  final def concat[A](as: ListR[A], aas: ListR[A]): ListR[A] = concatR(convert(as), aas)
+
+  @tailrec
+  private def concatL[A](acc: ListL[A], as: ListR[A]): ListL[A] = as match {
+    case RNil       ⇒ acc
+    case Cons(h, t) ⇒ concatL(Snoc(acc, h), t)
+  }
+
+  final def concat[A](as: ListL[A], aas: ListL[A]): ListL[A] = concatL(as, convert(aas))
 
   implicit class RichListR[A](as: ListR[A]) {
     def ⧺[AA <: A] (other: ListR[AA]): ListR[A] = concat(as, other)
   }
 
+  implicit class RichListL[A](as: ListL[A]) {
+    def ⧺[AA <: A] (other: ListL[AA]): ListL[A] = concat(as, other)
+  }
 }
