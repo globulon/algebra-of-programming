@@ -4,10 +4,17 @@ import scalaz.Isomorphism.<~>
 import scalaz.Monoid
 
 import scala.annotation.tailrec
+import scalaz.syntax.std.boolean._
 
 trait Lists { self: Isomorphisms ⇒
+  final def cond[A, B](p: A ⇒ Boolean)(f:  ⇒ A ⇒ B)(g: ⇒ A ⇒ B): A ⇒ B =
+    a ⇒ p(a).option(a).map(f).getOrElse(g(a))
+
   final def cons[A](h: A, r: ListR[A]): ListR[A] = Cons(h, r)
   final def nilR[A]: ListR[A] = RNil
+
+  final def wrap[A](a: A): ListR[A] = cons(a, RNil)
+  final def nilp[A]: A ⇒ ListR[A] = _ ⇒ RNil
 
   final def snoc[A](h: ListL[A], r: A): ListL[A] = Snoc(h, r)
   final def nilL[A]: ListL[A] = LNil
@@ -26,6 +33,9 @@ trait Lists { self: Isomorphisms ⇒
   final def listr[A, B](f: A ⇒ B): ListR[A] ⇒ ListR[B] = foldr[A, ListR[B]](nilR[B], {(a, bs) ⇒ cons(f(a), bs) })
 
   final def concat[A](as: ListR[A], aas: ListR[A]): ListR[A] = foldr[A, ListR[A]](as, cons)(aas)
+
+  final def filter[A](p: A ⇒ Boolean): ListR[A] ⇒ ListR[A] =
+    listr(cond(p)(wrap[A])(nilp[A])) andThen foldr(RNil, (curr: ListR[A], acc: ListR[A]) ⇒ concat(acc, curr))
 
   @tailrec
   private def foldL[A, B](c: B, f: (B, A) ⇒ B, acc: B)(as: ListR[A]): B = as match {
@@ -47,6 +57,8 @@ trait Lists { self: Isomorphisms ⇒
     def sum(implicit ev: Monoid[A]): A = foldr[A, A](ev.zero, ev.append(_, _))(as)
 
     def length: Int = fmap(_ ⇒ 1).sum
+
+    def filter(p: A ⇒ Boolean): ListR[A] = Lists.this.filter(p)(as)
   }
 
   implicit class RichListL[A](as: ListL[A]) {

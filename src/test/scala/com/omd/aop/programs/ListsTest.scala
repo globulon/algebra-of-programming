@@ -54,6 +54,12 @@ final class ListsTest extends WordSpec with MustMatchers {
     }
   }
 
+  "filter" must {
+    "rule in filtered elements" in {
+      rightList.filter(_ % 2 == 0 ) must be (cons(2, cons(4, nilR)))
+    }
+  }
+
   private def rightList =  cons(2, cons(3, cons(4, nilR)))
 
   private def leftList =  snoc(snoc(snoc[Int](LNil, 2), 3), 4)
