@@ -4,4 +4,4 @@ package object programs
   extends Recursion with RecursiveTypes
     with Recursions with Lists
     with Isomorphisms with Naturalities
-    with Monoids
+    with Monoids with Functions with Trees
