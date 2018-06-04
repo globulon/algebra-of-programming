@@ -11,7 +11,7 @@ final class TreesTest extends WordSpec with MustMatchers {
   }
 
   "depth" must {
-    "procees one leaf" in {
+    "process one leaf" in {
       depth(tip("a")) must be(1)
     }
     "process one tree" in {

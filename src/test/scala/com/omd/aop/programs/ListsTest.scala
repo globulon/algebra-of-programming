@@ -58,6 +58,17 @@ final class ListsTest extends WordSpec with MustMatchers {
     "rule in filtered elements" in {
       rightList.filter(_ % 2 == 0 ) must be (cons(2, cons(4, nilR)))
     }
+
+    "inits" must {
+      "generate initials in right list" in {
+        rightList.inits must be  (Cons(Cons(2,RNil),Cons(Cons(2,Cons(3,RNil)),Cons(Cons(2,Cons(3,Cons(4,RNil))),RNil))))
+      }
+
+      "generate initials in left list" in {
+        leftList.inits must be (snoc(Snoc(Snoc(LNil,Snoc(LNil,2)),Snoc(Snoc(LNil,2),3)),Snoc(Snoc(Snoc(LNil,2),3),4)))
+      }
+
+    }
   }
 
   private def rightList =  cons(2, cons(3, cons(4, nilR)))

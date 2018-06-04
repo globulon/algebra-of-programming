@@ -49,6 +49,16 @@ trait Lists { self: Isomorphisms ⇒
 
   final def concat[A](as: ListL[A], aas: ListL[A]): ListL[A] = foldl[A, ListL[A]](as, snoc)(aas)
 
+  final def inits[A]: ListL[A] ⇒ ListL[ListL[A]] = foldl[A, ListL[ListL[A]]](
+    nilL[ListL[A]],
+    {
+      case (LNil, a)         ⇒ snoc(nilL[ListL[A]], snoc(nilL[A], a))
+      case (Snoc(xs, x), a ) ⇒ snoc(snoc(xs, x), snoc(x, a))
+    }
+  )
+
+
+
   implicit class RichListR[A](as: ListR[A]) {
     def ⧺[AA <: A] (other: ListR[AA]): ListR[A] = concat(as, other)
 
@@ -59,6 +69,9 @@ trait Lists { self: Isomorphisms ⇒
     def length: Int = fmap(_ ⇒ 1).sum
 
     def filter(p: A ⇒ Boolean): ListR[A] = Lists.this.filter(p)(as)
+
+    def inits: ListR[ListR[A]] =
+      convert(listl[ListL[A], ListR[A]]{ case ll : ListL[ListL[A]] ⇒ convert(ll) }(Lists.this.inits(convert[A](as))))
   }
 
   implicit class RichListL[A](as: ListL[A]) {
@@ -69,5 +82,7 @@ trait Lists { self: Isomorphisms ⇒
     def sum(implicit ev: Monoid[A]): A = foldl[A, A](ev.zero, ev.append(_, _))(as)
 
     def length: Int = fmap(_ ⇒ 1).sum
+
+    def inits: ListL[ListL[A]] = Lists.this.inits(as)
   }
 }
