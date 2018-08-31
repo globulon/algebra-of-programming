@@ -1,7 +1,7 @@
 package com.omd.aop.programs
 
-import org.scalatest.{MustMatchers, WordSpec}
 import com.omd.aop.programs.{size ⇒ sz}
+import org.scalatest.{MustMatchers, WordSpec}
 
 final class TreesTest extends WordSpec with MustMatchers {
   "tree" must {
