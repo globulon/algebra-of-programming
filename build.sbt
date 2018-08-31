@@ -62,9 +62,7 @@ fork in Test := true
 addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.7")
 
 resolvers ++= Seq(
-  "Typesafe Repo" at "http://repo.typesafe.com/typesafe/releases/",
-  "sonatype-oss-public" at "https://oss.sonatype.org/content/groups/public/",
-  "sonatype-releases" at "https://oss.sonatype.org/content/repositories/releases/",
+  Resolver.typesafeRepo("releases"),
   Resolver.sonatypeRepo("releases")
 )
 
