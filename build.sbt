@@ -67,3 +67,5 @@ resolvers ++= Seq(
   "sonatype-releases" at "https://oss.sonatype.org/content/repositories/releases/",
   Resolver.sonatypeRepo("releases")
 )
+
+coverageEnabled := true
