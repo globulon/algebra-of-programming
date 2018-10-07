@@ -1,7 +1,8 @@
 name := "algebra-of-programming"
-version := "0.0.1-SNAPSHOT"
+version := "0.0.2-SNAPSHOT"
 
-scalaVersion := "2.12.6"
+scalaVersion := "2.12.7"
+
 scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
   "-encoding", "utf-8", // Specify character encoding used by source files.

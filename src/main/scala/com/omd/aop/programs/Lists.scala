@@ -58,7 +58,6 @@ trait Lists { self: Isomorphisms ⇒
   )
 
 
-
   implicit class RichListR[A](as: ListR[A]) {
     def ⧺[AA <: A] (other: ListR[AA]): ListR[A] = concat(as, other)
 
